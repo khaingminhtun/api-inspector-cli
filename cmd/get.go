@@ -6,7 +6,9 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/khaingminhtun/api-inspector-cli/internal/client"
 	"github.com/khaingminhtun/api-inspector-cli/internal/config"
+	"github.com/khaingminhtun/api-inspector-cli/internal/models"
 	"github.com/spf13/cobra"
 )
 
@@ -20,18 +22,28 @@ var getCmd = &cobra.Command{
 	Args: cobra.ExactArgs(1),
 
 	RunE: func(cmd *cobra.Command, args []string) error {
-		url := args[0]
 
-		timeout := config.Timeout()
+		request := models.Request{
+			Method: "GET",
+			URL:    args[0],
+		}
+
+		response, err := client.MakeRequest(
+			request,
+			config.Timeout(),
+		)
+
+		if err != nil {
+			return err
+		}
+
+		fmt.Println(response.Status)
 
 		output := config.Output()
 
-		fmt.Println("GET request to:", url)
-
 		fmt.Printf(
-			"URL: %s\nTimeout: %d\nOutput: %s\n",
-			url,
-			timeout,
+			"Output: %s\n",
+
 			output,
 		)
 
