@@ -7,12 +7,21 @@ import (
 	"github.com/spf13/viper"
 )
 
-func Load() error {
+type Config struct{
+
+    Timeout int
+
+	Output string
+
+	Headers map[string]string
+}
+
+func Load() (*Config,error) {
 
 	home, err := os.UserHomeDir()
 
 	if err != nil {
-		return err
+		return nil,err
 	}
 
 	viper.AddConfigPath(home)
@@ -48,22 +57,23 @@ func Load() error {
 
 	// Read config
 
-	err = viper.ReadInConfig()
-
-	if err != nil {
+	if err := viper.ReadInConfig(); err != nil {
 		fmt.Println(
 			"Using default configuration",
 		)
-		return nil
+		
 	}
 
-	return nil
+	 cfg := &Config{
+
+		Timeout: viper.GetInt("timeout"),
+
+		Output: viper.GetString("output"),
+
+		Headers: viper.GetStringMapString("headers"),
+	 }
+
+	 return cfg, nil
 }
 
-func Timeout() int {
-	return viper.GetInt("timeout")
-}
 
-func Output() string {
-	return viper.GetString("output")
-}

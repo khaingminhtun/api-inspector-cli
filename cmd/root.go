@@ -1,73 +1,80 @@
-/*
-Copyright © 2026 NAME HERE <EMAIL ADDRESS>
-*/
 package cmd
 
 import (
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/khaingminhtun/api-inspector-cli/internal/config"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
-var (
-	timeout int
+var appConfig *config.Config
 
-	output string
-)
-
-// rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "apispy",
 	Short: "API Inspection CLI",
 	Long: `
 API Spy is a CLI tool for inspecting HTTP APIs.
 	`,
+
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		return applyFlags(cmd)
+	},
+}
+
+func SetConfig(cfg *config.Config) {
+	appConfig = cfg
 }
 
 func Execute() {
 
-	err := config.Load()
-	if err != nil {
-		log.Fatal(err)
-	}
+	err := rootCmd.Execute()
 
-	err = rootCmd.Execute()
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
 }
 
+func applyFlags(cmd *cobra.Command) error {
+
+	timeout, err := cmd.Flags().GetInt("timeout")
+
+	if err != nil {
+		return err
+	}
+
+	if timeout != 0 {
+		appConfig.Timeout = timeout
+	}
+
+	output, err := cmd.Flags().GetString("output")
+
+	if err != nil {
+		return err
+	}
+
+	if output != "" {
+		appConfig.Output = output
+	}
+
+	return nil
+}
+
 func init() {
 
 	rootCmd.PersistentFlags().
-		IntVar(
-			&timeout,
+		Int(
 			"timeout",
-			30,
+			0,
 			"request timeout",
 		)
 
-	viper.BindPFlag(
-		"timeout",
-		rootCmd.PersistentFlags().Lookup("timeout"),
-	)
-
 	rootCmd.PersistentFlags().
-		StringVar(
-			&output,
+		String(
 			"output",
-			"json",
+			"",
 			"output format",
 		)
-
-	viper.BindPFlag(
-		"output",
-		rootCmd.PersistentFlags().Lookup("output"),
-	)
 
 }

@@ -4,10 +4,8 @@ Copyright © 2026 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"fmt"
-
 	"github.com/khaingminhtun/api-inspector-cli/internal/client"
-	"github.com/khaingminhtun/api-inspector-cli/internal/config"
+	"github.com/khaingminhtun/api-inspector-cli/internal/formatter"
 	"github.com/khaingminhtun/api-inspector-cli/internal/models"
 	"github.com/spf13/cobra"
 )
@@ -24,28 +22,28 @@ var getCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 
 		request := models.Request{
-			Method: "GET",
-			URL:    args[0],
+			Method:  "GET",
+			URL:     args[0],
+			Headers: appConfig.Headers,
 		}
 
 		response, err := client.MakeRequest(
 			request,
-			config.Timeout(),
+			appConfig.Timeout,
 		)
 
 		if err != nil {
 			return err
 		}
 
-		fmt.Println(response.Status)
-
-		output := config.Output()
-
-		fmt.Printf(
-			"Output: %s\n",
-
-			output,
+		err = formatter.Print(
+			appConfig.Output,
+			response,
 		)
+
+		if err != nil {
+			return err
+		}
 
 		return nil
 	},
