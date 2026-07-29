@@ -1,11 +1,17 @@
 package models
 
-import "time"
+import (
+	"net/http"
+)
 
 type Response struct {
-	StatusCode int
-	Status     string
-	Headers    map[string][]string
-	Body       []byte
-	Duration   time.Duration
+	StatusCode int `json:"status_code"`
+
+	Status string `json:"status"`
+
+	Headers http.Header `json:"headers"`
+
+	Body interface{} `json:"body"`
+
+	Duration string `json:"duration"`
 }

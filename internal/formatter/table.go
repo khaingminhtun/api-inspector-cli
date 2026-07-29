@@ -1,6 +1,7 @@
 package formatter
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/khaingminhtun/api-inspector-cli/internal/models"
@@ -32,7 +33,19 @@ func (TableFormatter) Print(response models.Response) error {
 
 	fmt.Println()
 
-	fmt.Println(string(response.Body))
+	fmt.Println("Body")
+
+	body, err := json.MarshalIndent(
+		response.Body,
+		"",
+		"  ",
+	)
+
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(string(body))
 
 	return nil
 

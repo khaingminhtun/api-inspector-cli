@@ -1,6 +1,7 @@
 package client
 
 import (
+	"encoding/json"
 	"io"
 	"net/http"
 	"time"
@@ -21,6 +22,14 @@ func ParseResponse(
 		return models.Response{}, err
 	}
 
+	var bodyData interface{}
+
+	err = json.Unmarshal(body, &bodyData)
+
+	if err != nil {
+		bodyData = string(body)
+	}
+
 	return models.Response{
 
 		StatusCode: resp.StatusCode,
@@ -29,8 +38,8 @@ func ParseResponse(
 
 		Headers: resp.Header,
 
-		Body: body,
+		Body: bodyData,
 
-		Duration: duration,
+		Duration: duration.String(),
 	}, nil
 }

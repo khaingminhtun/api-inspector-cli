@@ -31,6 +31,16 @@ func BuildRequest(r models.Request) (*http.Request, error) {
 		req.Header.Set(key, value)
 	}
 
+	// Default content type for body
+	if r.Body != "" &&
+		req.Header.Get("Content-Type") == "" {
+
+		req.Header.Set(
+			"Content-Type",
+			"application/json",
+		)
+	}
+
 	return req, nil
 }
 
@@ -39,7 +49,7 @@ func Do(
 	request models.Request,
 
 ) (*http.Response, time.Duration, error) {
-   
+
 	req, err := BuildRequest(request)
 
 	if err != nil {
