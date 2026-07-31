@@ -5,6 +5,7 @@ package cmd
 
 import (
 	"github.com/khaingminhtun/api-inspector-cli/internal/client"
+	"github.com/khaingminhtun/api-inspector-cli/internal/config"
 	"github.com/khaingminhtun/api-inspector-cli/internal/formatter"
 	"github.com/khaingminhtun/api-inspector-cli/internal/models"
 	"github.com/spf13/cobra"
@@ -22,9 +23,12 @@ var getCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 
 		request := models.Request{
-			Method:  "GET",
-			URL:     args[0],
-			Headers: appConfig.Headers,
+			Method: "GET",
+			URL:    args[0],
+			Headers: config.MergeHeaders(
+				appConfig.Headers,
+				headers,
+			),
 		}
 
 		response, err := client.MakeRequest(

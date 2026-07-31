@@ -1,8 +1,11 @@
 package models
 
 type Request struct {
-	Method  string
-	URL     string
-	Headers map[string]string
-	Body    string
+	Method string `json:"method"`
+
+	URL string `json:"url"`
+
+	Headers map[string]string `json:"headers"`
+
+	Body string `json:"body"`
 }

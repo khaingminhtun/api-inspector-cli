@@ -10,6 +10,8 @@ import (
 
 var appConfig *config.Config
 
+var headers []string
+
 var rootCmd = &cobra.Command{
 	Use:   "apispy",
 	Short: "API Inspection CLI",
@@ -75,6 +77,15 @@ func init() {
 			"output",
 			"",
 			"output format",
+		)
+
+	rootCmd.PersistentFlags().
+		StringSliceVarP(
+			&headers,
+			"header",
+			"H",
+			[]string{},
+			"HTTP headers",
 		)
 
 }

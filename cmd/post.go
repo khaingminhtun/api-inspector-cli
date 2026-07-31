@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"github.com/khaingminhtun/api-inspector-cli/internal/client"
+	"github.com/khaingminhtun/api-inspector-cli/internal/config"
 	"github.com/khaingminhtun/api-inspector-cli/internal/formatter"
 	"github.com/khaingminhtun/api-inspector-cli/internal/models"
 	"github.com/spf13/cobra"
@@ -21,10 +22,13 @@ var postCmd = &cobra.Command{
 		}
 
 		request := models.Request{
-			Method:  "POST",
-			URL:     args[0],
-			Headers: appConfig.Headers,
-			Body:    body,
+			Method: "POST",
+			URL:    args[0],
+			Headers: config.MergeHeaders(
+				appConfig.Headers,
+				headers,
+			),
+			Body: body,
 		}
 
 		response, err := client.MakeRequest(
